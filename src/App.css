@@ -1,0 +1,108 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.row {
+  display: flex;
+}
+
+.row:nth-child(1) > .cell,
+.row:nth-child(4) > .cell,
+.row:nth-child(7) > .cell {
+  border-top: 1px solid black;
+}
+
+.row:nth-child(9) > .cell {
+  border-bottom: 1px solid black;
+}
+
+.cell {
+  padding: 8px;
+  width: 30px;
+  height: 30px;
+  border: 1px dotted gray;
+}
+
+.cell:nth-child(1),
+.cell:nth-child(4),
+.cell:nth-child(7) {
+  border-left: 1px solid black;
+}
+
+.cell:nth-child(9) {
+  border-right: 1px solid black;
+}
+
+.value {
+  font-size: 15px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.markers {
+  width: 30px;
+  height: 30px;
+}
+
+.markers > .row {
+  height: 10px;
+}
+
+.markers > .row > .marker {
+  width: 10px;
+  height: 10px;
+}
+
+.marker {
+  color: gray;
+  padding: 2px;
+  font-size: 10px;
+}
+
+.sdku {
+  margin: 10px;
+}
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  overflow: auto;
+}
