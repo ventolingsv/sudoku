@@ -1,8 +1,11 @@
 import clonedeep from 'lodash.clonedeep';
 
 import { extendTable, isSolved } from './TableUtils';
-import { solveByCell, solveByRow, solveByCol, solveByBlock } from './solutionFuncs/SolutionFuncs';
 import { ExtendedTable, Table } from '../types/Types';
+import solveByRow from './solutionFuncs/byRow/byRow';
+import solveByBlock from './solutionFuncs/byBlock/byBlock';
+import solveByCol from './solutionFuncs/byColumn/byColumn';
+import solveByCell from './solutionFuncs/byCell/byCell';
 
 const solutionFuncs = [solveByCell, solveByRow, solveByCol, solveByBlock];
 
@@ -33,4 +36,3 @@ export const solve = async (table: Table, hook: any) => {
     console.log('addedSteps', addedSteps);
     return newTable.table;
 };
-

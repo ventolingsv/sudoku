@@ -1,9 +1,22 @@
-import { CellType, ExtendedTable, Step } from '../../../types/Types';
+import {  ExtendedTable, Step } from '../../../types/Types';
 import { byBlockPointer } from './byBlockPointer';
-import { byBlockLineReduction } from './byBlockLineReduction';
+import { filterFilledTable } from '../../TableUtils';
+import { byAll } from '../byAll';
+import { byAllHidden } from '../byAllHidden';
 
-export const byBlock = (table: ExtendedTable, block: CellType[], queue: Step[], blockIdx: number) => {
-    byBlockFuncs.forEach((fn: Function) => queue.unshift(fn(table, block, queue, blockIdx)));
-};
+const solveByBlock = (table: ExtendedTable, queue: Step[]) => ({
+    fn: () => {
+        const blocks = filterFilledTable(table.blocks);
+        blocks.forEach(
+            (block) => byBlockFuncs.forEach(
+                (fn: Function) => fn(table, block, queue)
+            )
+        );
+        table.blocks.forEach((block, idx) => byBlockPointer(table, block, queue, idx));
+    },
+    name: 'solveByBlock'
+});
 
-const byBlockFuncs = [byBlockPointer, byBlockLineReduction];
+const byBlockFuncs = [byAll, byAllHidden];
+
+export default solveByBlock;
