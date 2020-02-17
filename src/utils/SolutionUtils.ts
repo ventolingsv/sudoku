@@ -16,7 +16,7 @@ export const solve = async (table: Table, hook: any) => {
     const addSteps = () => solutionFuncs.forEach((fn: Function) => queue.push(fn(newTable, queue)));
 
     addSteps();
-    while((queue.length || !isSolved(newTable)) && addedSteps < 3) {
+    while((queue.length || !isSolved(newTable)) && addedSteps < 5) {
         if (!queue.length) {
             addSteps();
             addedSteps++;

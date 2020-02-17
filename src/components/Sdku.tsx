@@ -6,10 +6,10 @@ import Cell from './Cell';
 export default class Sdku extends React.PureComponent<SdkuProps> {
     renderRows = (cells: Table) => cells.map(this.renderRow);
 
-    renderRow = (row: CellType[]) => {
+    renderRow = (row: CellType[], idx: number) => {
         const cells = row.map((cell, idx) => <Cell key={idx} {...cell}/>);
         return (
-            <div className="row">
+            <div key={idx} className="row">
                 {cells}
             </div>
         )

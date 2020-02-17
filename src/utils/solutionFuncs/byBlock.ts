@@ -1,42 +1,77 @@
+import clonedeep from 'lodash.clonedeep';
+
 import { ExtendedTable, Step, CellType } from '../../types/Types';
+import { clearMarker } from '../TableUtils';
 
 export const byBlock = (table: ExtendedTable, block: CellType[], queue: Step[], blockIdx: number) => ({
     fn: () => {
         const counts = countBlockNums(block, blockIdx);
-        console.log(counts);
+
+        Object.entries(counts).forEach(
+            (pointer) => clearByNum(table, pointer, queue, blockIdx)
+        )
     },
     name: 'byBlock'
 });
 
-const handle = (table: ExtendedTable, el: BlockElement, nums: number[], queue: Step[]) => {
+const clearByNum = (table: ExtendedTable, pointer: Pointer, queue: Step[], blockIdx: number) => {
+    const num = Number(pointer[0]);
+    const blockRow = indexToRow(blockIdx);
+    const blockCol = indexToCol(blockIdx);
 
-};
+    pointer[1].rows.forEach((row) => {
+        const tableRow = table.rows[row];
 
-const filterPointers = (counts: BlockCount) => {
-    counts.nums.forEach((num) => {
-
-    })
-};
-
-const countBlockNums = (block: CellType[], blockIdx: number) => block.reduce((acc: BlockCount, cell, idx) => {
-    const blockRow = indexToRow(blockIdx) * 3;
-    const blockCol = indexToCol(blockIdx) * 3;
-
-    cell.markers.forEach((mrkr) => {
-        if (!acc.nums.includes(mrkr)) acc.nums.push(mrkr);
-
-        const rowIdx = indexToRow(idx) + blockRow;
-        acc.row[rowIdx] = acc.row[rowIdx] || {};
-        if (acc.row[rowIdx][mrkr]) acc.row[rowIdx][mrkr]++;
-        else acc.row[rowIdx][mrkr] = 1;
-
-        const colIdx = indexToCol(idx) + blockCol;
-        acc.col[colIdx] = acc.col[colIdx] || {};
-        if (acc.col[colIdx][mrkr]) acc.col[colIdx][mrkr]++;
-        else acc.col[colIdx][mrkr] = 1;
+        tableRow
+            .filter((cell, idx) => indexToRow(idx) !== blockCol && cell.markers.includes(num))
+            .forEach((cell) => clearMarker(table, cell, num, queue));
     });
-    return acc;
-}, { row: {}, col: {}, nums: [] });
+
+    pointer[1].cols.forEach((col) => {
+        const tableCol = table.cols[col];
+
+        tableCol
+            .filter((_, idx) => indexToRow(idx) !== blockRow)
+            .forEach((cell) => clearMarker(table, cell, num, queue));
+    });
+};
+
+const countBlockNums = (block: CellType[], blockIdx: number) => {
+    const counts = block.reduce((acc: BlockCount, cell, idx) => {
+        const blockRow = indexToRow(blockIdx) * 3;
+        const blockCol = indexToCol(blockIdx) * 3;
+
+        cell.markers.forEach((mrkr) => {
+            acc[mrkr] = acc[mrkr] || { rows: {}, cols: {} };
+
+            const rowIdx = indexToRow(idx) + blockRow;
+            if (acc[mrkr].rows[rowIdx]) acc[mrkr].rows[rowIdx]++;
+            else acc[mrkr].rows[rowIdx] = 1;
+
+            const colIdx = indexToCol(idx) + blockCol;
+            if (acc[mrkr].cols[colIdx]) acc[mrkr].cols[colIdx]++;
+            else acc[mrkr].cols[colIdx] = 1;
+        });
+        return acc;
+    }, {});
+
+   return Object.entries(counts).reduce((acc: BlockPointer, [num, counts]) => {
+       const rows = getSingle(counts.rows);
+       const cols = getSingle(counts.cols);
+
+       if (rows.length || cols.length) {
+           acc[num] = { rows, cols };
+       }
+
+       return acc;
+   }, {});
+};
+
+const getSingle = (count: ElementCount) => {
+    const els = Object.entries(count);
+    if (els.length === 1) return [Number(els[0][0])];
+    else return [];
+};
 
 const indexToRow = (idx: number) => idx < 3 ? 0 : idx < 6 ? 1 : 2;
 const indexToCol = (idx: number) => {
@@ -58,9 +93,21 @@ const indexToCol = (idx: number) => {
 };
 
 type BlockCount = {
-    nums: number[],
-    row: BlockElement,
-    col: BlockElement
+    [key: string]: NumCount
+};
+
+type ElementCount = { [key: string] : number };
+
+type NumCount = {
+    rows: ElementCount
+    cols: ElementCount
+};
+
+type BlockPointer = {
+    [key: string]: {
+        rows: number[],
+        cols: number[]
+    }
 }
 
-type BlockElement = { [key: string]: { [key: string] : number } };
+type Pointer = [string, { rows: number[], cols: number[] }];

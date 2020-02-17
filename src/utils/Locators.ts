@@ -25,8 +25,8 @@ export const locateHidden = (arr: CellType[], length: number) => {
 };
 
 const countMarkers = (allMarkers: number[], cells: CellType[], length: number, hidden: boolean, ) => {
-    const combinations: MarkersMap = allCombinations(allMarkers, length)
-        .reduce((acc: any, markers) => {
+    const combinations = allCombinations(allMarkers, length)
+        .reduce((acc: MarkersMap, markers) => {
             const combinationId = markers.join('');
             acc[combinationId] = { markers, count: 0 };
             return acc;
