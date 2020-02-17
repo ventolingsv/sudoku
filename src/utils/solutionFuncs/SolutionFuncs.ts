@@ -3,7 +3,7 @@ import { byAll } from './byAll';
 import { tryFillSingleMarker } from './bySingleMarker';
 import { byAllHidden } from './byAllHidden';
 import { ExtendedTable, Step } from '../../types/Types';
-import { byBlock } from './byBlock';
+import { byBlock } from './byBlock/byBlock';
 
 export const solveByCell = (table: ExtendedTable, queue: Step[]) => ({
     fn: () => {
@@ -41,7 +41,7 @@ export const solveByBlock = (table: ExtendedTable, queue: Step[]) => ({
             byAll(table, block, queue);
             byAllHidden(table, block, queue);
         });
-        table.blocks.forEach((block, idx) => queue.unshift(byBlock(table, block, queue, idx)));
+        table.blocks.forEach((block, idx) => byBlock(table, block, queue, idx));
     },
     name: 'solveByBlock'
 });

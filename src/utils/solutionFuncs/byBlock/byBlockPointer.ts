@@ -1,9 +1,7 @@
-import clonedeep from 'lodash.clonedeep';
+import { CellType, ExtendedTable, Step } from '../../../types/Types';
+import { clearMarker } from '../../TableUtils';
 
-import { ExtendedTable, Step, CellType } from '../../types/Types';
-import { clearMarker } from '../TableUtils';
-
-export const byBlock = (table: ExtendedTable, block: CellType[], queue: Step[], blockIdx: number) => ({
+export const byBlockPointer = (table: ExtendedTable, block: CellType[], queue: Step[], blockIdx: number) => ({
     fn: () => {
         const counts = countBlockNums(block, blockIdx);
 
@@ -11,7 +9,7 @@ export const byBlock = (table: ExtendedTable, block: CellType[], queue: Step[], 
             (pointer) => clearByNum(table, pointer, queue, blockIdx)
         )
     },
-    name: 'byBlock'
+    name: 'byBlockPointer'
 });
 
 const clearByNum = (table: ExtendedTable, pointer: Pointer, queue: Step[], blockIdx: number) => {
@@ -42,7 +40,7 @@ const countBlockNums = (block: CellType[], blockIdx: number) => {
         const blockCol = indexToCol(blockIdx) * 3;
 
         cell.markers.forEach((mrkr) => {
-            acc[mrkr] = acc[mrkr] || { rows: {}, cols: {} };
+            acc[mrkr] = acc[mrkr] || {rows: {}, cols: {}};
 
             const rowIdx = indexToRow(idx) + blockRow;
             if (acc[mrkr].rows[rowIdx]) acc[mrkr].rows[rowIdx]++;
@@ -55,16 +53,16 @@ const countBlockNums = (block: CellType[], blockIdx: number) => {
         return acc;
     }, {});
 
-   return Object.entries(counts).reduce((acc: BlockPointer, [num, counts]) => {
-       const rows = getSingle(counts.rows);
-       const cols = getSingle(counts.cols);
+    return Object.entries(counts).reduce((acc: BlockPointer, [num, counts]) => {
+        const rows = getSingle(counts.rows);
+        const cols = getSingle(counts.cols);
 
-       if (rows.length || cols.length) {
-           acc[num] = { rows, cols };
-       }
+        if (rows.length || cols.length) {
+            acc[num] = {rows, cols};
+        }
 
-       return acc;
-   }, {});
+        return acc;
+    }, {});
 };
 
 const getSingle = (count: ElementCount) => {
@@ -75,7 +73,7 @@ const getSingle = (count: ElementCount) => {
 
 const indexToRow = (idx: number) => idx < 3 ? 0 : idx < 6 ? 1 : 2;
 const indexToCol = (idx: number) => {
-    switch(idx) {
+    switch (idx) {
         case 0:
         case 3:
         case 6:
@@ -88,7 +86,8 @@ const indexToCol = (idx: number) => {
         case 5:
         case 8:
             return 2;
-        default: return 0;
+        default:
+            return 0;
     }
 };
 
@@ -96,7 +95,7 @@ type BlockCount = {
     [key: string]: NumCount
 };
 
-type ElementCount = { [key: string] : number };
+type ElementCount = { [key: string]: number };
 
 type NumCount = {
     rows: ElementCount
