@@ -1,5 +1,6 @@
 import { CellType, ExtendedTable, Step } from '../../../types/Types';
 import { clearMarker } from '../../TableUtils';
+import { ElementCount, getSingle, indexToCol, indexToRow } from '../../Utils';
 
 export const byBlockPointer = (table: ExtendedTable, block: CellType[], queue: Step[], blockIdx: number) => ({
     fn: () => {
@@ -38,15 +39,15 @@ const countBlockNums = (block: CellType[], blockIdx: number) => {
     const counts = block.reduce((acc: BlockCount, cell, idx) => {
         const blockRow = indexToRow(blockIdx) * 3;
         const blockCol = indexToCol(blockIdx) * 3;
+        const rowIdx = indexToRow(idx) + blockRow;
+        const colIdx = indexToCol(idx) + blockCol;
 
         cell.markers.forEach((mrkr) => {
-            acc[mrkr] = acc[mrkr] || {rows: {}, cols: {}};
+            acc[mrkr] = acc[mrkr] || { rows: {}, cols: {} };
 
-            const rowIdx = indexToRow(idx) + blockRow;
             if (acc[mrkr].rows[rowIdx]) acc[mrkr].rows[rowIdx]++;
             else acc[mrkr].rows[rowIdx] = 1;
 
-            const colIdx = indexToCol(idx) + blockCol;
             if (acc[mrkr].cols[colIdx]) acc[mrkr].cols[colIdx]++;
             else acc[mrkr].cols[colIdx] = 1;
         });
@@ -65,37 +66,9 @@ const countBlockNums = (block: CellType[], blockIdx: number) => {
     }, {});
 };
 
-const getSingle = (count: ElementCount) => {
-    const els = Object.entries(count);
-    if (els.length === 1) return [Number(els[0][0])];
-    else return [];
-};
-
-const indexToRow = (idx: number) => idx < 3 ? 0 : idx < 6 ? 1 : 2;
-const indexToCol = (idx: number) => {
-    switch (idx) {
-        case 0:
-        case 3:
-        case 6:
-            return 0;
-        case 1:
-        case 4:
-        case 7:
-            return 1;
-        case 2:
-        case 5:
-        case 8:
-            return 2;
-        default:
-            return 0;
-    }
-};
-
 type BlockCount = {
     [key: string]: NumCount
 };
-
-type ElementCount = { [key: string]: number };
 
 type NumCount = {
     rows: ElementCount

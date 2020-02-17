@@ -1,4 +1,4 @@
-import { getCellGroup} from './Utils';
+import { indexToRow} from './Utils';
 import { CellType, ExtendedTable, Step, Table } from '../types/Types';
 import { tryFillSingleMarker } from './solutionFuncs/bySingleMarker';
 
@@ -39,8 +39,8 @@ export const splitByCell = (table: Table) => table.reduce((acc: CellType[], row)
 
 const blockIds = ['00', '01', '02', '10', '11', '12', '20', '21', '22'];
 export const getBlockId = (row: number, col: number) => {
-    const rowGroup = getCellGroup(row);
-    const colGroup = getCellGroup(col);
+    const rowGroup = indexToRow(row);
+    const colGroup = indexToRow(col);
 
     return blockIds.indexOf(`${rowGroup}${colGroup}`);
 };

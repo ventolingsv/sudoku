@@ -4,8 +4,6 @@ export const cell = (value: number, row: number, col: number) => ({
     cords: { row, col }
 });
 
-export const getCellGroup = (idx: number) => idx < 3 ? 0 : idx < 6 ? 1 : idx < 9 ? 2 : -1;
-
 export const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export const parse = (str: string) => str.split('\n')
@@ -38,4 +36,38 @@ export const setToArr = <T>(set: Set<T>) => {
     const result: T[] = [];
     set.forEach((val) => result.push(val));
     return result;
+};
+
+export const getSingle = (count: ElementCount) => {
+    const els = Object.entries(count);
+    if (els.length === 1) return [Number(els[0][0])];
+    else return [];
+};
+
+export type ElementCount = { [key: string]: number };
+
+export const indexToRow = (idx: number) => idx < 3 ? 0 : idx < 6 ? 1 : idx < 9 ? 2 : -1;
+export const indexToCol = (idx: number) => {
+    switch (idx) {
+        case 0:
+        case 3:
+        case 6:
+            return 0;
+        case 1:
+        case 4:
+        case 7:
+            return 1;
+        case 2:
+        case 5:
+        case 8:
+            return 2;
+        default:
+            return 0;
+    }
+};
+export const indexToBlock = (rowIdx: number, colIdx: number) => {
+    const blockCol = indexToRow(colIdx);
+    const blockRow = indexToRow(rowIdx);
+
+    return blockCol + blockRow * 3;
 };

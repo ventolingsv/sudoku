@@ -9,7 +9,7 @@ import { solve } from './utils/SolutionUtils';
 import { Step, Table } from './types/Types';
 
 const cells = parse(
-    '    3   9\n     5 6 \n     75 8\n  6      \n32    6  \n    8  54\n 3  5    \n81 943   \n9    8   '
+    '   123   \n      7  \n  8    1 \n    7 56 \n 6     42\n 2   8   \n43      6\n  6 9 8  \n     5  3'
 ).map(
     (row, rowNum) => row.map(
         (cl, colNum) => cell(cl, rowNum, colNum)

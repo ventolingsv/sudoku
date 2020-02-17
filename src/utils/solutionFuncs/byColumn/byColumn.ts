@@ -2,6 +2,7 @@ import { ExtendedTable, Step } from '../../../types/Types';
 import { filterFilledTable } from '../../TableUtils';
 import { byAll } from '../byAll';
 import { byAllHidden } from '../byAllHidden';
+import { byColumnPointer } from './byColumnPointer';
 
 const solveByCol = (table: ExtendedTable, queue: Step[]) => ({
     fn: () => {
@@ -11,6 +12,7 @@ const solveByCol = (table: ExtendedTable, queue: Step[]) => ({
                 (fn: Function) => fn(table, col, queue)
             )
         );
+        table.cols.forEach((col, idx) => queue.unshift(byColumnPointer(table, col, queue, idx)));
     },
     name: 'solveByCol'
 });

@@ -1,5 +1,5 @@
 import clonedeep from 'lodash.clonedeep';
-import { getCellGroup, numbers} from './Utils';
+import { indexToRow, numbers} from './Utils';
 import { Table } from '../types/Types';
 
 type CellCords = {
@@ -40,11 +40,11 @@ const checkColumn = (table: Table, num: number, {cellNum}: CellCords) => table.r
 );
 
 const checkBlock = (table: Table, num: number, {rowNum, cellNum}: CellCords) => {
-    const rowGroup = getCellGroup(rowNum);
-    const colGroup = getCellGroup(cellNum);
+    const rowGroup = indexToRow(rowNum);
+    const colGroup = indexToRow(cellNum);
 
-    const rows = indexes.filter((_, idx) => getCellGroup(idx) === rowGroup);
-    const cols = indexes.filter((_, idx) => getCellGroup(idx) === colGroup);
+    const rows = indexes.filter((_, idx) => indexToRow(idx) === rowGroup);
+    const cols = indexes.filter((_, idx) => indexToRow(idx) === colGroup);
 
     return rows.reduce(
         (acc, rowNum) => {

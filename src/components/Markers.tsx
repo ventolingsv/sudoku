@@ -1,11 +1,11 @@
 import React from 'react';
-import { getCellGroup, numbers } from '../utils/Utils';
+import { indexToRow, numbers } from '../utils/Utils';
 
 export default class Markers extends React.PureComponent<MarkersProps> {
     renderRow = (row: any[], idx: number) => <div key={idx} className="row">{row}</div>;
 
     getRows = () => numbers.reduce((acc: any[], num, idx) => {
-        const rowIdx = getCellGroup(idx);
+        const rowIdx = indexToRow(idx);
         const value = this.props.markers.includes(num) ? num : undefined;
 
         acc[rowIdx] = acc[rowIdx] || [];

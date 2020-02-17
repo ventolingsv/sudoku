@@ -1,33 +1,32 @@
 import { CellType, ExtendedTable, Step } from '../../../types/Types';
 import { clearMarker } from '../../TableUtils';
-import { ElementCount, getSingle, indexToBlock, indexToRow } from '../../Utils';
+import { ElementCount, getSingle, indexToBlock, indexToCol } from '../../Utils';
 
-export const byRowPointer = (table: ExtendedTable, row: CellType[], queue: Step[], rowIdx: number) => ({
+export const byColumnPointer = (table: ExtendedTable, col: CellType[], queue: Step[], colIdx: number) => ({
    fn: () => {
-      const counts = countRowNums(row, rowIdx);
-
+      const counts = countColNums(col, colIdx);
       Object.entries(counts).forEach(
-          (pointer) => clearByNum(table, pointer, queue, rowIdx)
+          (pointer) => clearByNum(table, pointer, queue, colIdx)
       )
    },
-   name: 'byRowPointer'
+   name: 'byColumnPointer'
 });
 
-const clearByNum = (table: ExtendedTable, pointer: Pointer, queue: Step[], rowIdx: number) => {
+const clearByNum = (table: ExtendedTable, pointer: Pointer, queue: Step[], colIdx: number) => {
    const num = Number(pointer[0]);
 
    pointer[1].blocks.forEach((block) => {
       const tableBlock = table.blocks[block];
-      const blockRow = indexToRow(block);
+      const blockCol = indexToCol(block);
 
       tableBlock
-          .filter((cell, idx) => indexToRow(idx) + blockRow * 3 !== rowIdx && cell.markers.includes(num))
+          .filter((cell, idx) => indexToCol(idx) + blockCol * 3 !== colIdx && cell.markers.includes(num))
           .forEach((cell) => clearMarker(table, cell, num, queue));
    });
 };
 
-const countRowNums = (row: CellType[], rowIdx: number) => {
-   const counts = row.reduce((acc: RowCount, cell, colIdx) => {
+const countColNums = (col: CellType[], colIdx: number) => {
+   const counts = col.reduce((acc: ColCount, cell, rowIdx) => {
       cell.markers.forEach((mrkr) => {
          const blockId = indexToBlock(rowIdx, colIdx);
          acc[mrkr] = acc[mrkr] || { blocks: {} };
@@ -49,7 +48,7 @@ const countRowNums = (row: CellType[], rowIdx: number) => {
    }, {});
 };
 
-type RowCount = {
+type ColCount = {
    [key: string]: NumCount
 };
 

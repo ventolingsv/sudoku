@@ -12,7 +12,7 @@ const solveByBlock = (table: ExtendedTable, queue: Step[]) => ({
                 (fn: Function) => fn(table, block, queue)
             )
         );
-        table.blocks.forEach((block, idx) => byBlockPointer(table, block, queue, idx));
+        table.blocks.forEach((block, idx) => queue.unshift(byBlockPointer(table, block, queue, idx)));
     },
     name: 'solveByBlock'
 });
