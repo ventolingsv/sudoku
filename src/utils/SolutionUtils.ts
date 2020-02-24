@@ -1,7 +1,7 @@
 import clonedeep from 'lodash.clonedeep';
 
 import { extendTable, isSolved } from './TableUtils';
-import { ExtendedTable, Table } from '../types/Types';
+import { ExtendedTable, Step, Table } from '../types/Types';
 import solveByRow from './solutionFuncs/byRow/byRow';
 import solveByBlock from './solutionFuncs/byBlock/byBlock';
 import solveByCol from './solutionFuncs/byColumn/byColumn';
@@ -11,28 +11,27 @@ const solutionFuncs = [solveByCell, solveByRow, solveByCol, solveByBlock];
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export const solve = async (table: Table, hook: any) => {
+export const solve = async (table: Table, hook?: (state: any) => void) => {
     const newTable: ExtendedTable = extendTable(clonedeep(table));
-    const queue: Function[] = [];
+    const queue: Step[] = [];
+    const updateState = (table: Table, queue: Step[]) => hook && hook({ table: clonedeep(table), queue });
     let addedSteps = 0;
 
-    const addSteps = () => solutionFuncs.forEach((fn: Function) => queue.push(fn(newTable, queue)));
+    const addSteps = () => {
+        solutionFuncs.forEach((fn: Function) => queue.push(fn(newTable, queue)));
+        addedSteps++;
+    };
 
     addSteps();
     while((queue.length || !isSolved(newTable)) && addedSteps < 5) {
-        if (!queue.length) {
-            addSteps();
-            addedSteps++;
-        }
+        if (!queue.length) addSteps();
 
         await sleep(1);
         const op: any = queue.shift()!!;
         op.fn();
-        hook(clonedeep(newTable.table), queue);
+        updateState(newTable.table, queue);
     }
 
-    hook(clonedeep(newTable.table), []);
-
-    console.log('addedSteps', addedSteps);
+    updateState(newTable.table, []);
     return newTable.table;
 };
